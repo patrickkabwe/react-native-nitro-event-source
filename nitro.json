@@ -1,0 +1,23 @@
+{
+  "$schema": "https://nitro.margelo.com/nitro.schema.json",
+  "cxxNamespace": [
+    "nitroeventsource"
+  ],
+  "ios": {
+    "iosModuleName": "NitroEventSource"
+  },
+  "android": {
+    "androidNamespace": [
+      "nitroeventsource"
+    ],
+    "androidCxxLibName": "NitroEventSource"
+  },
+  "autolinking": {
+    "NitroEventSource": {
+      "cpp": "HybridNitroEventSource"
+    }
+  },
+  "ignorePaths": [
+    "**/node_modules"
+  ]
+}
