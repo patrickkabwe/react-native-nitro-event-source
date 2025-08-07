@@ -1,5 +1,4 @@
-import { NitroModules } from 'react-native-nitro-modules'
-import type { NitroEventSource as NitroEventSourceSpec } from './specs/nitro-event-source.nitro'
+import EventSource from './event-source';
+export * from './types';
 
-export const NitroEventSource =
-  NitroModules.createHybridObject<NitroEventSourceSpec>('NitroEventSource')
+export default EventSource;
