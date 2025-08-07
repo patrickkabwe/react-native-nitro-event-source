@@ -10,8 +10,7 @@
 namespace margelo::nitro::nitroeventsource::curl_utils
 {
 
-int
-progress_callback(void* userdata, curl_off_t, curl_off_t, curl_off_t, curl_off_t) noexcept
+int progress_callback(void* userdata, curl_off_t, curl_off_t, curl_off_t, curl_off_t) noexcept
 {
   if (!userdata)
     return 1;
@@ -20,8 +19,7 @@ progress_callback(void* userdata, curl_off_t, curl_off_t, curl_off_t, curl_off_t
   return (self->_running.load() && !self->_closed.load()) ? 0 : 1;
 }
 
-size_t
-write_callback(char* ptr, size_t size, size_t nmemb, void* userdata) noexcept
+size_t write_callback(char* ptr, size_t size, size_t nmemb, void* userdata) noexcept
 {
   const size_t total_bytes = size * nmemb;
 
@@ -59,9 +57,8 @@ write_callback(char* ptr, size_t size, size_t nmemb, void* userdata) noexcept
 namespace margelo::nitro::nitroeventsource
 {
 
-std::shared_ptr<HybridNitroEventSourceSpec>
-HybridNitroEventSource::create(const std::string&                            url,
-                               const std::optional<NitroEventSourceOptions>& options)
+std::shared_ptr<HybridNitroEventSourceSpec> HybridNitroEventSource::create(
+    const std::string& url, const std::optional<NitroEventSourceOptions>& options)
 {
   auto instance      = std::make_shared<HybridNitroEventSource>();
   instance->_url     = url;
@@ -92,8 +89,7 @@ HybridNitroEventSource::~HybridNitroEventSource()
   close();
 }
 
-void
-HybridNitroEventSource::close()
+void HybridNitroEventSource::close()
 {
   if (_closed.exchange(true))
   {
@@ -139,17 +135,14 @@ HybridNitroEventSource::close()
   log("EventSource closed successfully");
 }
 
-void
-HybridNitroEventSource::setEventCallback(
-    const std::function<void(const NitroEventSourceEvent&)>& callback)
+void HybridNitroEventSource::setEventCallback(const std::function<void(const NitroEventSourceEvent&)>& callback)
 {
   const std::lock_guard<std::mutex> lock(_callback_mutex);
   _event_callback = callback;
 }
 
-void
-HybridNitroEventSource::addEventListener(
-    const std::string& type, const std::function<void(const NitroEventSourceEvent&)>& listener)
+void HybridNitroEventSource::addEventListener(const std::string& type,
+                                              const std::function<void(const NitroEventSourceEvent&)>& listener)
 {
   if (_closed.load())
   {
@@ -161,10 +154,8 @@ HybridNitroEventSource::addEventListener(
   _event_listeners[type].emplace_back(listener);
 }
 
-void
-HybridNitroEventSource::removeEventListener(
-    const std::string& type,
-    const std::function<void(const NitroEventSourceEvent&)>& /* listener */)
+void HybridNitroEventSource::removeEventListener(
+    const std::string& type, const std::function<void(const NitroEventSourceEvent&)>& /* listener */)
 {
   const std::lock_guard<std::mutex> lock(_listeners_mutex);
 
@@ -191,8 +182,7 @@ HybridNitroEventSource::removeEventListener(
   }
 }
 
-void
-HybridNitroEventSource::dispatch_event(const NitroEventSourceEvent& event) noexcept
+void HybridNitroEventSource::dispatch_event(const NitroEventSourceEvent& event) noexcept
 {
   if (_closed.load())
   {
@@ -224,7 +214,7 @@ HybridNitroEventSource::dispatch_event(const NitroEventSourceEvent& event) noexc
   std::vector<std::function<void(const NitroEventSourceEvent&)>> listeners_copy;
   {
     const std::lock_guard<std::mutex> lock(_listeners_mutex);
-    const auto                        it = _event_listeners.find(event.type);
+    const auto it = _event_listeners.find(event.type);
     if (it != _event_listeners.end())
     {
       listeners_copy = it->second;
@@ -251,8 +241,7 @@ HybridNitroEventSource::dispatch_event(const NitroEventSourceEvent& event) noexc
   }
 }
 
-void
-HybridNitroEventSource::connect() noexcept
+void HybridNitroEventSource::connect() noexcept
 {
   constexpr auto RECONNECT_DELAY = std::chrono::seconds(3);
   constexpr auto POLL_INTERVAL   = std::chrono::milliseconds(100);
@@ -266,8 +255,7 @@ HybridNitroEventSource::connect() noexcept
       log("Connection failed, reconnecting in 3s...");
 
       const auto end_time = std::chrono::steady_clock::now() + RECONNECT_DELAY;
-      while (std::chrono::steady_clock::now() < end_time && _running.load() &&
-             _should_retry.load() && !_closed.load())
+      while (std::chrono::steady_clock::now() < end_time && _running.load() && _should_retry.load() && !_closed.load())
       {
         std::this_thread::sleep_for(POLL_INTERVAL);
       }
@@ -277,8 +265,7 @@ HybridNitroEventSource::connect() noexcept
   log("Connection thread terminated");
 }
 
-bool
-HybridNitroEventSource::attempt_connection() noexcept
+bool HybridNitroEventSource::attempt_connection() noexcept
 {
   struct CurlHandle
   {
@@ -295,8 +282,7 @@ HybridNitroEventSource::attempt_connection() noexcept
     {
       return handle;
     }
-    CURL*
-    get() const
+    CURL* get() const
     {
       return handle;
     }
@@ -310,13 +296,11 @@ HybridNitroEventSource::attempt_connection() noexcept
       if (list)
         curl_slist_free_all(list);
     }
-    void
-    append(const char* header)
+    void append(const char* header)
     {
       list = curl_slist_append(list, header);
     }
-    curl_slist*
-    get() const
+    curl_slist* get() const
     {
       return list;
     }
@@ -340,14 +324,12 @@ HybridNitroEventSource::attempt_connection() noexcept
     return true;
   };
 
-  if (!set_option(CURLOPT_URL, _url.c_str()) ||
-      !set_option(CURLOPT_WRITEFUNCTION, curl_utils::write_callback) ||
-      !set_option(CURLOPT_WRITEDATA, this) ||
-      !set_option(CURLOPT_XFERINFOFUNCTION, curl_utils::progress_callback) ||
+  if (!set_option(CURLOPT_URL, _url.c_str()) || !set_option(CURLOPT_WRITEFUNCTION, curl_utils::write_callback) ||
+      !set_option(CURLOPT_WRITEDATA, this) || !set_option(CURLOPT_XFERINFOFUNCTION, curl_utils::progress_callback) ||
       !set_option(CURLOPT_XFERINFODATA, this) || !set_option(CURLOPT_NOPROGRESS, 0L) ||
       !set_option(CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1) ||
-      !set_option(CURLOPT_USERAGENT, "nitro-event-source/1.0") ||
-      !set_option(CURLOPT_FOLLOWLOCATION, 1L) || !set_option(CURLOPT_MAXREDIRS, 5L))
+      !set_option(CURLOPT_USERAGENT, "nitro-event-source/1.0") || !set_option(CURLOPT_FOLLOWLOCATION, 1L) ||
+      !set_option(CURLOPT_MAXREDIRS, 5L))
   {
     return false;
   }
@@ -395,8 +377,7 @@ HybridNitroEventSource::attempt_connection() noexcept
   return result == CURLE_OK || result == CURLE_ABORTED_BY_CALLBACK;
 }
 
-void
-HybridNitroEventSource::parse_sse_chunk(std::string_view chunk) noexcept
+void HybridNitroEventSource::parse_sse_chunk(std::string_view chunk) noexcept
 {
   if (chunk.empty() || _closed.load())
   {
@@ -431,7 +412,7 @@ HybridNitroEventSource::parse_sse_chunk(std::string_view chunk) noexcept
     }
 
     const std::string_view field = line.substr(0, colon_pos);
-    std::string_view       value = line.substr(colon_pos + 1);
+    std::string_view value       = line.substr(colon_pos + 1);
 
     if (!value.empty() && value.front() == ' ')
     {
@@ -473,8 +454,7 @@ HybridNitroEventSource::parse_sse_chunk(std::string_view chunk) noexcept
   _buffer.erase(0, start);
 }
 
-void
-HybridNitroEventSource::process_sse_event() noexcept
+void HybridNitroEventSource::process_sse_event() noexcept
 {
   if (_event_data.empty() || _closed.load())
   {
@@ -496,8 +476,7 @@ HybridNitroEventSource::process_sse_event() noexcept
   _event_data.clear();
 }
 
-void
-HybridNitroEventSource::log(std::string_view message) const noexcept
+void HybridNitroEventSource::log(std::string_view message) const noexcept
 {
   std::cout << "[" << TAG << "] " << message << std::endl;
 }

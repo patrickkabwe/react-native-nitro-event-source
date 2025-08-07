@@ -12,7 +12,6 @@
     "clean": "git clean -dfX",
     "release": "semantic-release",
     "format:cpp": "sh ./clang-format.sh",
-    "lint:cpp": "sh ./lint-cpp.sh",
     "build": "bun run typecheck && bob build",
     "codegen": "nitro-codegen --logLevel=\"debug\" && bun run build",
     "postcodegen": "bun --cwd example pod"

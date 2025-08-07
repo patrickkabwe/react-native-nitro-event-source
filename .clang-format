@@ -1,6 +1,9 @@
 # .clang-format
+
+# Base style and language
 BasedOnStyle: LLVM
 Language: Cpp
+Standard: Latest
 
 # Indentation
 IndentWidth: 2
@@ -13,7 +16,7 @@ IndentPPDirectives: AfterHash
 # Braces & Functions
 BreakBeforeBraces: Allman
 AllowShortFunctionsOnASingleLine: None
-AlwaysBreakAfterDefinitionReturnType: All
+AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakTemplateDeclarations: Yes
 BreakConstructorInitializers: BeforeComma
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
@@ -41,21 +44,20 @@ SpaceInEmptyParentheses: false
 SpaceAfterTemplateKeyword: true
 
 # Line length & wrapping
-ColumnLimit: 100
+ColumnLimit: 120
 PenaltyBreakBeforeFirstCallParameter: 100
 PenaltyReturnTypeOnItsOwnLine: 200
 
-# Formatting behavior
+# Pointer and namespace formatting
 DerivePointerAlignment: false
 PointerAlignment: Left
-ReflowComments: true
-SortUsingDeclarations: true
 FixNamespaceComments: true
 
-# C++11/14/17
-Standard: Latest
+# Misc formatting
+ReflowComments: true
+SortUsingDeclarations: true
 
-# Experimental (optional)
+# Experimental alignment
 AlignConsecutiveAssignments: true
-AlignConsecutiveDeclarations: true
+AlignConsecutiveDeclarations: false
 AlignTrailingComments: true
