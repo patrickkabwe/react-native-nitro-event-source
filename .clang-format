@@ -1,0 +1,63 @@
+# .clang-format
+
+# Base style and language
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: Latest
+
+# Indentation
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+ContinuationIndentWidth: 4
+IndentCaseLabels: true
+IndentPPDirectives: AfterHash
+
+# Braces & Functions
+BreakBeforeBraces: Allman
+AllowShortFunctionsOnASingleLine: None
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakTemplateDeclarations: Yes
+BreakConstructorInitializers: BeforeComma
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+
+# Includes
+SortIncludes: true
+IncludeBlocks: Preserve
+IncludeCategories:
+  - Regex:           '^<.*\.h>'
+    Priority:        1
+    SortPriority:    0
+    CaseSensitive:   false
+  - Regex:           '^"'
+    Priority:        2
+    SortPriority:    0
+    CaseSensitive:   false
+
+# Spaces
+SpaceAfterCStyleCast: true
+SpaceBeforeParens: ControlStatements
+SpacesInParentheses: false
+SpacesInAngles: false
+SpacesInContainerLiterals: false
+SpaceInEmptyParentheses: false
+SpaceAfterTemplateKeyword: true
+
+# Line length & wrapping
+ColumnLimit: 120
+PenaltyBreakBeforeFirstCallParameter: 100
+PenaltyReturnTypeOnItsOwnLine: 200
+
+# Pointer and namespace formatting
+DerivePointerAlignment: false
+PointerAlignment: Left
+FixNamespaceComments: true
+
+# Misc formatting
+ReflowComments: true
+SortUsingDeclarations: true
+
+# Experimental alignment
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: false
+AlignTrailingComments: true

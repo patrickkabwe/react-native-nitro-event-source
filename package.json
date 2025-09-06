@@ -1,7 +1,7 @@
 {
   "name": "react-native-nitro-event-source",
   "version": "0.1.0",
-  "description": "react-native-nitro-event-source is a superfast implementation of js event source api for react native app built with c++.",
+  "description": "A high-performance, C++-powered implementation of the JavaScript EventSource API for React Native, optimized for speed and reliability.",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "clean": "git clean -dfX",
     "release": "semantic-release",
+    "format:cpp": "sh ./clang-format.sh",
     "build": "bun run typecheck && bob build",
     "codegen": "nitro-codegen --logLevel=\"debug\" && bun run build",
     "postcodegen": "bun --cwd example pod"
@@ -30,6 +31,7 @@
     "android/fix-prefab.gradle",
     "android/gradle.properties",
     "android/CMakeLists.txt",
+    "third_party",
     "android/src",
     "ios/**/*.h",
     "ios/**/*.m",
