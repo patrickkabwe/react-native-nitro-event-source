@@ -1,0 +1,26 @@
+name: C++ Format
+
+on:
+  push:
+    paths:
+      - 'cpp/**'
+      - '.clang-format'
+      - 'clang-format.sh'
+  pull_request:
+    paths:
+      - 'cpp/**'
+      - '.clang-format'
+      - 'clang-format.sh'
+
+jobs:
+  format_code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: 🛠️ Install clang-tidy & clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
+
+      - name: 🔧 Check clang-format
+        run: bun format:cpp
